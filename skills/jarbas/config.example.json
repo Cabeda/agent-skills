@@ -1,0 +1,19 @@
+{
+  "timezone": "Europe/Lisbon",
+  "daily_limit": 3,
+  "daily_delivery_h": 5.0,
+  "work_window": { "start": "09:00", "end": "18:00", "days": [0, 1, 2, 3, 4] },
+  "work_projects": ["Work"],
+  "personal_projects": ["Side projects"],
+  "routine_projects": ["Social"],
+  "routine_labels": ["routine", "socials"],
+  "quick_names": ["^(Water|Stretch|Vitamins)"],
+  "routine_names": ["\\b(e-?mail|slack|exercise)\\b"],
+  "task_rules": [
+    { "regex": "^close work$", "kind": "fixed" }
+  ],
+  "focus_title_regex": "(\\bfocus\\b|deep[ -]?work)",
+  "mirror_calendars": ["todoist"],
+  "overlays": [],
+  "extensions": []
+}

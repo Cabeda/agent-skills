@@ -1,0 +1,29 @@
+{
+  "timezone": "Europe/Lisbon",
+  "work_projects": [
+    "Work"
+  ],
+  "personal_projects": [
+    "Projects"
+  ],
+  "routine_projects": [
+    "Social"
+  ],
+  "quick_names": [
+    "^(Water|Stretch)"
+  ],
+  "routine_names": [
+    "\\b(e-?mail|exercise)\\b"
+  ],
+  "task_rules": [
+    {
+      "regex": "^close work$",
+      "kind": "fixed"
+    },
+    {
+      "regex": "^Triage ticket #\\d+",
+      "kind": "ticket"
+    }
+  ],
+  "focus_title_regex": "(🔒|🔧|\\bfocus\\b|deep[ -]?work|project block)"
+}
