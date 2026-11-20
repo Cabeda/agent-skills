@@ -1,11 +1,11 @@
 ---
 name: expert-review
-description: Review a diff through one or more expert lenses (security, tests, reliability, performance, and any expert added under experts/). Use when the user asks for a security, test, performance or other specialist review, or when another skill needs focused reviewers picked by the scope of a change.
+description: Review a diff through expert lenses picked by its scope. Use when the user asks for a security, performance or other specialist review, or when another skill needs focused reviewers.
 ---
 
 # Expert review
 
-An **expert** is a reviewer with one lens. Each expert lives in its own file under [`experts/`](experts/), and the file is the whole brief: what to look for, and what to leave to other experts. This skill picks experts, runs each one as a fresh sub-agent, and returns their findings side by side.
+An **expert** is a reviewer with one lens. Each expert is one file under [`experts/`](experts/), and the file is its whole brief. This skill picks experts, runs each in a fresh sub-agent, and returns their findings side by side.
 
 ## 1. Pin the diff
 
@@ -13,11 +13,11 @@ Take the fixed point from the user or the calling skill: a branch, commit, tag o
 
 ## 2. Pick the experts
 
-If the user or caller named experts, use exactly those. Otherwise read the frontmatter of every file in `experts/` and pick each expert whose `use-when` matches the diff. Read the changed paths and the hunks, not just the commit messages. Pick at least one. State the picks and the one-line reason for each before you run them.
+If the user or caller named experts, use exactly those. Otherwise read the `use-when` line of every file in `experts/`, and pick each expert it matches against the changed paths and hunks. Pick at least one. State each pick with a one-line reason before you run them.
 
 ## 3. Run each expert in a fresh sub-agent
 
-Spawn every picked expert in parallel, each with a fresh context. Never review as yourself: the expert must not have seen the reasoning that produced the code. Give each one:
+Spawn every picked expert in parallel, each in a fresh context, so it judges the diff without the reasoning that produced it. Give each one:
 
 - the diff command and commit list
 - the full text of its expert file
@@ -26,23 +26,14 @@ Spawn every picked expert in parallel, each with a fresh context. Never review a
 
 ## 4. Report
 
-Each expert returns findings in this shape, and you present them under one heading per expert, unmerged and unranked across experts:
+Each expert returns findings in this shape:
 
 ```
 - [blocker|major|minor] path:line: what is wrong. Why it matters. Suggested fix.
 ```
 
-A finding needs a location and a reason a reviewer could check. An expert with nothing to report says `No findings` and names what it checked. End with a one-line count per expert.
+A finding carries a location and a reason a reviewer could check. An expert with nothing to report says `No findings` and names what it checked.
 
-## Adding an expert
+Present the findings under one heading per expert, kept separate and in each expert's order. End with a one-line count per expert.
 
-Copy any file in `experts/` and change it. The frontmatter decides when the expert is picked:
-
-```markdown
----
-name: <expert-name>
-use-when: <the kinds of change this expert should see, in plain words>
----
-```
-
-The body is the brief. Keep it to what this lens catches, and name the neighbouring expert that owns anything near the edge, so two experts do not report the same finding.
+To add an expert, see [ADDING-EXPERTS.md](ADDING-EXPERTS.md).

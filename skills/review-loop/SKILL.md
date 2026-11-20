@@ -1,29 +1,27 @@
 ---
 name: review-loop
-description: Relentless adversarial review of a branch or draft MR. Runs reviewers, fixes what they find, and re-requests review until a clean round or 10 rounds. Use after implementing a change, before a human reviews it, or when the user asks to loop on review until the reviewer is happy.
+description: Relentless adversarial review loop on a branch or draft MR, fixing and re-reviewing until a clean round. Use after implementing a change, or when the user asks to keep reviewing until the reviewer is happy.
 ---
 
 # Review loop
 
-Hand the human an MR that reviewers have already failed to break. Each **round** runs every chosen reviewer on the current head, triages what they find, fixes it, and pushes. The loop ends on a **clean round**: every reviewer ran on the current head and reported nothing to fix.
+Hand the human an MR that reviewers have already failed to break. Each **round** runs every chosen reviewer on the current head, triages what they find, and fixes it. The loop ends on a **clean round**: every reviewer ran on the current head, and no finding was new. A finding is new unless it repeats one you already rejected or parked.
 
 ## 0. Set up
 
-Pin the target: the MR or branch, its base, and the spec or ticket. Read the ticket now, because reviewers check against it. The round cap is **10** unless the user sets another.
+Pin the target: the MR or branch, and its base. Note the ticket, because triage decides scope against it. The round cap is **10** unless the user sets another.
 
 ## 1. Choose the reviewers
 
 Choose once, and change the choice only when the scope of the diff changes.
 
-- Always call the Skill tool with `code-review`. It covers documented standards and fit to the spec.
-- Call the Skill tool with `expert-review` for the experts whose lens the diff needs. Name them, with one line on why.
-- If the MR has a review bot (a CI job or app that posts review notes), it is one more reviewer. Look for it in the repo's `AGENTS.md`, `CONTRIBUTING.md` or CI config.
-
-Reviewers run in fresh sub-agents or on the server, never as you. You wrote the code, so you are the one reviewer who cannot find its blind spots.
+- Call the Skill tool with `code-review`, for documented standards and fit to the ticket.
+- Call the Skill tool with `expert-review` with the experts whose lens the diff needs. Name them, with one line on why.
+- If the MR has a review bot (a CI job or app that posts review notes), add it. The repo's `AGENTS.md`, `CONTRIBUTING.md` or CI config says how to trigger it.
 
 ## 2. Run a round
 
-Push the current head first, so every reviewer sees the same commit. Then run every reviewer on it. For a review bot, trigger it on the new head and wait for its new notes. Use the harness's PR watch when there is one, not a sleep loop.
+With an MR, push first, so every reviewer sees the same commit. Run every reviewer on the current head. Trigger a review bot on the new head, and wait for its new notes with the harness's PR watch when there is one.
 
 A reviewer that fails to run (job error, model unavailable, runner interrupted) has not reviewed. Retry it once. If it fails again, the round is not clean: record it and tell the user.
 
@@ -32,18 +30,18 @@ A reviewer that fails to run (job error, model unavailable, runner interrupted) 
 Give each finding exactly one outcome:
 
 - **Fix**: the finding is right. Fix the cause, not the symptom the reviewer quoted, and look for the same mistake elsewhere in the diff.
-- **Reject**: the finding is wrong. Reply with the evidence (a file and line, a test, upstream source). A rejected finding that comes back is not new; point to the earlier reply.
-- **Park**: the fix needs a decision only the human can make (a design choice, a behaviour change, scope outside the ticket). Record it and keep fixing the rest.
+- **Reject**: the finding is wrong. Reply with the evidence: a file and line, a test, upstream source.
+- **Park**: the fix needs a decision only the human can make, such as a design choice, a behaviour change, or scope outside the ticket. Record it and keep fixing the rest.
 
-If a finding comes back after you fixed it twice, park it: the fix is not converging, and the human should see it.
+A finding that returns after two fixes is not converging: park it.
 
-## 4. Fix, verify, push
+## 4. Verify and commit
 
-Make the fixes. Run the repo's checks (lint, types, the tests that cover what you touched) before you push. Commit each round on its own, with a message that names what the round fixed. Never skip hooks.
+Run the repo's checks (lint, types, the tests that cover what you touched), and commit the round on its own, through the repo's hooks, with a message that names what it fixed.
 
-On the MR, reply to each bot thread you fixed or rejected, citing the commit or evidence. Resolve the bot's threads you fixed. Reply to human threads, but leave resolving them to the human.
+With an MR, reply to each bot thread you fixed or rejected, citing the commit or the evidence, and resolve the bot's threads you fixed. Reply to human threads, and leave resolving them to the human.
 
-Then start the next round at step 2.
+Start the next round at step 2.
 
 ## 5. Stop and hand over
 
