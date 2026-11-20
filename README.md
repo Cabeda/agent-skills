@@ -10,7 +10,7 @@ Personal agent skills, published for [skills.sh](https://skills.sh). Each folder
 | [`gamenative`](skills/gamenative) | Drive GameNative (Wine on Android) over `adb`. |
 | [`listen-once`](skills/listen-once) | Write explanations that work when heard once. |
 | [`meal-planner`](skills/meal-planner) | Plan meals from Notion recipes and put them on Google Calendar. |
-| [`review-loop`](skills/review-loop) | Review, fix and re-review a branch or draft MR until a clean round, max 10 rounds. |
+| [`review-loop`](skills/review-loop) | Review, fix and re-review a branch, draft MR or whole codebase until no issues are found. |
 | [`expert-review`](skills/expert-review) | Review a diff through chosen expert lenses. Add an expert by adding one file. |
 | [`tmdb`](skills/tmdb) | Look up movies and TV shows with the TMDB CLI. |
 | [`wger-workout`](skills/wger-workout) | Fetch today's routine from wger. |
