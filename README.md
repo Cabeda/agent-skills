@@ -10,6 +10,8 @@ Personal agent skills, published for [skills.sh](https://skills.sh). Each folder
 | [`gamenative`](skills/gamenative) | Drive GameNative (Wine on Android) over `adb`. |
 | [`listen-once`](skills/listen-once) | Write explanations that work when heard once. |
 | [`meal-planner`](skills/meal-planner) | Plan meals from Notion recipes and put them on Google Calendar. |
+| [`review-loop`](skills/review-loop) | Review, fix and re-review a branch or draft MR until a clean round, max 10 rounds. |
+| [`expert-review`](skills/expert-review) | Review a diff through chosen expert lenses. Add an expert by adding one file. |
 | [`tmdb`](skills/tmdb) | Look up movies and TV shows with the TMDB CLI. |
 | [`wger-workout`](skills/wger-workout) | Fetch today's routine from wger. |
 
@@ -30,6 +32,14 @@ npx skills use Cabeda/agent-skills@jarbas
 ```
 
 Update with `npx skills update -g`.
+
+## Review skills
+
+`review-loop` runs reviewers, fixes what they find, and re-requests review until a round comes back clean. Its reviewers are other skills, and each one also runs on its own:
+
+- [`code-review`](https://github.com/mattpocock/skills) from Matt Pocock's skills, for standards and fit to the spec. Install it alongside: `npx skills add mattpocock/skills --skill code-review -g`.
+- `expert-review`, for focused lenses. The experts live in [`skills/expert-review/experts/`](skills/expert-review/experts). Add one by copying a file there and editing its `use-when` line; the loop picks experts by that line.
+- The MR's own review bot, when the repo has one. Document how to trigger it in the repo's `AGENTS.md` or `CONTRIBUTING.md`, and the loop uses it.
 
 ## Configuration
 
