@@ -1,12 +1,12 @@
 ---
 name: accessibility
-use-when: the change adds or changes interactive UI, forms, navigation, modals, images, colours or text styling.
+use-when: the scope contains interactive UI, forms, navigation, modals, images, colours or text styling.
 skill: addyosmani/web-quality-skills@accessibility
 ---
 
 # Accessibility expert
 
-Review the diff against the loaded `accessibility` skill, which follows WCAG 2.2. Report only what this change introduces or breaks.
+Review the scope against the loaded `accessibility` skill, which follows WCAG 2.2. On a change, report only what it introduces or breaks.
 
 Look for:
 

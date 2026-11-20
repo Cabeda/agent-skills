@@ -1,11 +1,11 @@
 ---
 name: reliability
-use-when: the change calls networks, databases or other services, retries or polls, runs in CI or deployment pipelines, handles errors, or creates resources that must be cleaned up.
+use-when: the scope calls networks, databases or other services, retries or polls, runs in CI or deployment pipelines, handles errors, or creates resources that must be cleaned up.
 ---
 
 # Reliability expert
 
-Find the ways the change fails badly when something it depends on is slow, down or wrong.
+Find the ways the code fails badly when something it depends on is slow, down or wrong.
 
 Look for:
 

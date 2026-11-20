@@ -1,11 +1,11 @@
 ---
 name: performance
-use-when: the change touches loops over data that can grow, database queries, hot request paths, caching, file or network I/O in a loop, or anything users wait on.
+use-when: the scope contains loops over data that can grow, database queries, hot request paths, caching, file or network I/O in a loop, or anything users wait on.
 ---
 
 # Performance expert
 
-Find work the change does more often, or on more data, than it needs to.
+Find work the code does more often, or on more data, than it needs to.
 
 Look for:
 

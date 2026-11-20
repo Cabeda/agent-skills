@@ -12,7 +12,8 @@ Personal agent skills, published for [skills.sh](https://skills.sh). Each folder
 | [`meal-planner`](skills/meal-planner) | Plan meals from Notion recipes and put them on Google Calendar. |
 | [`review-loop`](skills/review-loop) | Review, fix and re-review a branch or draft MR until a clean round. |
 | [`codebase-audit`](skills/codebase-audit) | Read-only daily audit of a repo: run the experts, skip already-filed findings, file the rest as proposed tickets. |
-| [`expert-review`](skills/expert-review) | Review a diff through chosen expert lenses. Add an expert by adding one file. |
+| [`expert-review`](skills/expert-review) | Review a change or a codebase through expert lenses. Add an expert by adding one file. |
+| [`dependency-update`](skills/dependency-update) | Update dependencies safely, one draft PR per update, under a release-age and pinning policy. |
 | [`tmdb`](skills/tmdb) | Look up movies and TV shows with the TMDB CLI. |
 | [`wger-workout`](skills/wger-workout) | Fetch today's routine from wger. |
 
@@ -36,13 +37,14 @@ Update with `npx skills update -g`.
 
 ## Review skills
 
-`review-loop` runs reviewers, fixes what they find, and re-requests review until a round comes back clean. Its reviewers are other skills, and each one also runs on its own:
+These skills compose, and each also runs on its own:
 
-- [`code-review`](https://github.com/mattpocock/skills) from Matt Pocock's skills, for standards and fit to the spec. Install it alongside: `npx skills add mattpocock/skills --skill code-review -g`.
-- `expert-review`, for focused lenses. The experts live in [`skills/expert-review/experts/`](skills/expert-review/experts). Add one by copying a file there and editing its `use-when` line; the loop picks experts by that line.
-- The MR's own review bot, when the repo has one. Document how to trigger it in the repo's `AGENTS.md` or `CONTRIBUTING.md`, and the loop uses it.
+- `expert-review` runs one or more experts on a change or a whole codebase, and returns findings with a fingerprint each. The experts live in [`skills/expert-review/experts/`](skills/expert-review/experts): security, tests, reliability, performance, dependencies, frontend design and accessibility. Add one by adding a file; see [`ADDING-EXPERTS.md`](skills/expert-review/ADDING-EXPERTS.md).
+- `review-loop` reviews a branch or MR, fixes what reviewers find, and repeats until a clean round. Its reviewers are `expert-review`, [`code-review`](https://github.com/mattpocock/skills), and the MR's review bot when the repo documents one.
+- `codebase-audit` is the read-only daily run: it reviews a whole repo with `expert-review`, drops findings already filed, and hands the rest to [`to-tickets`](https://github.com/mattpocock/skills) as proposed tickets.
+- `dependency-update` applies dependency updates as draft PRs. The `dependencies` expert reports against its policy, so an audit finds what is out of date and `dependency-update` fixes it.
 
-`codebase-audit` is the daily, read-only run: it reviews a whole repo with the experts, skips findings that already have a ticket, and hands the rest to `to-tickets`. It needs [`to-tickets`](https://github.com/mattpocock/skills), installed with `npx skills add mattpocock/skills --skill to-tickets -g`, and the repo's tracker.
+Some experts load a skill from another repo, installed on first use. Install the Matt Pocock skills alongside: `npx skills add mattpocock/skills --skill code-review --skill to-tickets -g`.
 
 ## Configuration
 

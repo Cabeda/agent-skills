@@ -1,6 +1,6 @@
 ---
 name: tests
-use-when: the change adds or edits tests, or changes behaviour that tests should cover.
+use-when: the scope contains tests, or behaviour that tests should cover.
 ---
 
 # Tests expert
