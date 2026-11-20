@@ -17,10 +17,16 @@ If the user or caller named experts, use exactly those. Otherwise read the `use-
 
 ## 3. Run each expert in a fresh sub-agent
 
-Spawn every picked expert in parallel, each in a fresh context, so it judges the diff without the reasoning that produced it. Give each one:
+Spawn every picked expert in parallel, each in a fresh context, so it judges the diff without the reasoning that produced it. An expert may name an external skill in its `skill:` field. Before the sub-agent starts, make that skill available:
+
+- If it is not installed, run `npx skills add <skill> -g -y`, for example `npx skills add anthropics/skills@frontend-design -g -y`.
+- If the install fails, the expert reports `skill not installed: <skill>` with the install command, and the round does not count as clean.
+
+Give each sub-agent:
 
 - the diff command and commit list
-- the full text of its expert file
+- the external skill to load first, when the expert names one. The skill supplies the domain guidance, and the expert file decides what to review against it.
+- the full text of the expert file
 - the spec or ticket, when one exists
 - the report format below
 

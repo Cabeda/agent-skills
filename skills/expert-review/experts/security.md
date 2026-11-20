@@ -1,19 +1,18 @@
 ---
 name: security
 use-when: the change handles input from users or the network, authentication, authorisation, secrets, file paths, shell or SQL commands, IAM or access policy, or dependencies.
+skill: getsentry/skills@security-review
 ---
 
 # Security expert
 
-Find ways the change lets someone read, change or run what they should not.
+Review the diff against the loaded `security-review` skill. That skill covers injection, XSS, authentication, authorisation and cryptography. Apply it, then add the checks below, which are specific to this codebase and that skill does not know about.
 
-Look for:
+Also look for:
 
-- Untrusted input reaching a shell, SQL, template, path, URL or deserialiser without validation or parameterisation.
-- Missing or weakened authentication and authorisation checks, including checks that run after the action they guard.
-- Secrets in code, logs, error messages, test fixtures or committed config.
 - Access policies broader than the code needs: wildcard actions or resources, public buckets, open network rules.
-- New or changed dependencies: unpinned versions, unfamiliar or typo-like names, and packages that pull large untrusted trees.
+- Secrets in committed config, test fixtures or log output, including values passed as environment variables into a container.
+- New or changed dependencies: unpinned versions, unfamiliar or typo-like package names.
 - Data a user can see or change that belongs to another user.
 
 Leave error handling and cleanup to `reliability`, and missing tests to `tests`.
