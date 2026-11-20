@@ -10,7 +10,8 @@ Personal agent skills, published for [skills.sh](https://skills.sh). Each folder
 | [`gamenative`](skills/gamenative) | Drive GameNative (Wine on Android) over `adb`. |
 | [`listen-once`](skills/listen-once) | Write explanations that work when heard once. |
 | [`meal-planner`](skills/meal-planner) | Plan meals from Notion recipes and put them on Google Calendar. |
-| [`review-loop`](skills/review-loop) | Review, fix and re-review a branch, draft MR or whole codebase until no issues are found. |
+| [`review-loop`](skills/review-loop) | Review, fix and re-review a branch or draft MR until a clean round. |
+| [`codebase-audit`](skills/codebase-audit) | Read-only daily audit of a repo: run the experts, skip already-filed findings, file the rest as proposed tickets. |
 | [`expert-review`](skills/expert-review) | Review a diff through chosen expert lenses. Add an expert by adding one file. |
 | [`tmdb`](skills/tmdb) | Look up movies and TV shows with the TMDB CLI. |
 | [`wger-workout`](skills/wger-workout) | Fetch today's routine from wger. |
@@ -40,6 +41,8 @@ Update with `npx skills update -g`.
 - [`code-review`](https://github.com/mattpocock/skills) from Matt Pocock's skills, for standards and fit to the spec. Install it alongside: `npx skills add mattpocock/skills --skill code-review -g`.
 - `expert-review`, for focused lenses. The experts live in [`skills/expert-review/experts/`](skills/expert-review/experts). Add one by copying a file there and editing its `use-when` line; the loop picks experts by that line.
 - The MR's own review bot, when the repo has one. Document how to trigger it in the repo's `AGENTS.md` or `CONTRIBUTING.md`, and the loop uses it.
+
+`codebase-audit` is the daily, read-only run: it reviews a whole repo with the experts, skips findings that already have a ticket, and hands the rest to `to-tickets`. It needs [`to-tickets`](https://github.com/mattpocock/skills), installed with `npx skills add mattpocock/skills --skill to-tickets -g`, and the repo's tracker.
 
 ## Configuration
 
