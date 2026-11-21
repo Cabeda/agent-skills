@@ -1,0 +1,121 @@
+{
+ "_fetched": "2026-11-21",
+ "_note": "Only the endpoints forge.py calls. Refresh by re-running the extraction in the PR that added this file.",
+ "_source": "https://codeberg.org/swagger.v1.json",
+ "bodies": {
+  "CreateIssueCommentOption": [
+   "body",
+   "updated_at"
+  ],
+  "CreateIssueOption": [
+   "assignee",
+   "assignees",
+   "body",
+   "closed",
+   "due_date",
+   "labels",
+   "milestone",
+   "ref",
+   "title"
+  ],
+  "CreateLabelOption": [
+   "color",
+   "description",
+   "exclusive",
+   "is_archived",
+   "name"
+  ],
+  "CreatePullRequestOption": [
+   "assignee",
+   "assignees",
+   "base",
+   "body",
+   "due_date",
+   "head",
+   "labels",
+   "milestone",
+   "title"
+  ],
+  "EditPullRequestOption": [
+   "allow_maintainer_edit",
+   "assignee",
+   "assignees",
+   "base",
+   "body",
+   "due_date",
+   "labels",
+   "milestone",
+   "state",
+   "title",
+   "unset_due_date"
+  ],
+  "IssueLabelsOption": [
+   "labels",
+   "updated_at"
+  ],
+  "MergePullRequestOption": [
+   "Do",
+   "MergeCommitID",
+   "MergeMessageField",
+   "MergeTitleField",
+   "delete_branch_after_merge",
+   "force_merge",
+   "head_commit_id",
+   "merge_when_checks_succeed"
+  ]
+ },
+ "paths": {
+  "/repos/{owner}/{repo}/collaborators/{collaborator}/permission": [
+   "get"
+  ],
+  "/repos/{owner}/{repo}/commits/{ref}/status": [
+   "get"
+  ],
+  "/repos/{owner}/{repo}/issues": [
+   "get",
+   "post"
+  ],
+  "/repos/{owner}/{repo}/issues/{index}": [
+   "delete",
+   "get",
+   "patch"
+  ],
+  "/repos/{owner}/{repo}/issues/{index}/comments": [
+   "get",
+   "post"
+  ],
+  "/repos/{owner}/{repo}/issues/{index}/labels": [
+   "delete",
+   "get",
+   "post",
+   "put"
+  ],
+  "/repos/{owner}/{repo}/labels": [
+   "get",
+   "post"
+  ],
+  "/repos/{owner}/{repo}/pulls": [
+   "get",
+   "post"
+  ],
+  "/repos/{owner}/{repo}/pulls/{index}": [
+   "get",
+   "patch"
+  ],
+  "/repos/{owner}/{repo}/pulls/{index}/files": [
+   "get"
+  ],
+  "/repos/{owner}/{repo}/pulls/{index}/merge": [
+   "delete",
+   "get",
+   "post"
+  ],
+  "/repos/{owner}/{repo}/pulls/{index}/reviews": [
+   "get",
+   "post"
+  ],
+  "/user": [
+   "get"
+  ]
+ }
+}

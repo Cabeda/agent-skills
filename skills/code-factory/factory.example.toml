@@ -1,0 +1,25 @@
+# factory.toml lives in the folder the factory runs in. Every key is optional.
+#
+# With no file, every repo directly under the folder on GitHub or Codeberg is in,
+# and nothing is written: every write is a dry run until you turn it off.
+# A typo in a key is an error, never a silent default.
+
+[defaults]
+dry-run = true        # report what would be written. Set false per repo once you trust the report.
+auto-merge = false    # merge-pass merges two-way-door PRs only when this is true.
+skip = true           # recommended start: an allow-list. Opt each repo in below.
+max-open-prs = 3      # PRs the factory may have open per repo
+max-open-issues = 10  # tickets the factory may have open per repo
+
+# trusted-authors = ["a-friend"]        # besides you and people with write access
+# skip-labels = ["needs-info", "needs-human", "wontfix"]
+# experts = []                          # empty runs every expert
+# max-merge-lines = 300
+# max-merge-files = 12
+# extra-one-way-paths = ["billing/**"]  # added to the built-in list, never replaces it
+
+# Opt a repo in. Start with one you can afford to be wrong in.
+[repos.my-project]
+skip = false
+# dry-run = false
+# auto-merge = true

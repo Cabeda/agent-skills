@@ -16,4 +16,4 @@ Look for:
 - Two runs that can overlap on shared state, and order assumptions between jobs or processes.
 - A failure in one optional part that takes down the whole run.
 
-Leave access and secrets to `security`, and slow-but-correct code to `performance`.
+Leave whether a failure is visible and alerted on to `sre`, access and secrets to `security`, and slow-but-correct code to `performance`.
