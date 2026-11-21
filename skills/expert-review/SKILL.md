@@ -25,7 +25,7 @@ Spawn the picked experts in parallel, each in a fresh context, so each judges th
 - the scope: the diff command and commit list, or the file list
 - its expert file, in full
 - the skill named in its `skill:` field, loaded first, when it has one
-- the spec or ticket, when one exists
+- the spec or ticket, when one exists, or the repo's goal when the caller gives one
 - the finding format below
 
 A `skill:` that is not installed gets `npx skills add <skill> -g -y`. If that fails, the expert reports `skill not installed: <skill>` with the command, and the run is not clean.
@@ -40,6 +40,7 @@ Each finding carries, in order:
 - **Evidence**: what the code does and why that is wrong, so a reviewer can check it.
 - **Fix**: the change that resolves it, in one or two sentences.
 - **Acceptance**: a command, test or observable result that shows it is gone.
+- **Goal**: when the caller gave a goal, how fixing this serves it, in one sentence. Leave it out when no goal was given.
 - **Fingerprint**: `<path>|<lens>|<claim>`, where the claim is the title lower-cased with punctuation and digits removed. The same problem on another day gets the same fingerprint.
 
 Return a finding missing its location, evidence or acceptance to the expert once; drop it if it comes back incomplete. An expert with nothing to report says `No findings` and names what it checked.

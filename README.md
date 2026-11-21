@@ -13,6 +13,10 @@ Personal agent skills, published for [skills.sh](https://skills.sh). Each folder
 | [`review-loop`](skills/review-loop) | Review, fix and re-review a branch or draft MR until a clean round. |
 | [`codebase-audit`](skills/codebase-audit) | Read-only daily audit of a repo: run the experts, skip already-filed findings, file the rest as proposed tickets. |
 | [`expert-review`](skills/expert-review) | Review a change or a codebase through expert lenses. Add an expert by adding one file. |
+| [`code-factory`](skills/code-factory) | One unattended daily run over every repo in a folder: merge what is safe, update dependencies, audit against each repo's goal, implement open issues. Scheduled on Hermes. |
+| [`forge`](skills/forge) | One command for GitHub and Codeberg that enforces the factory's safety rules in code: dry run by default, trusted authors only, a merge gate. |
+| [`issue-worker`](skills/issue-worker) | Implement open issues no PR covers, as reviewed draft PRs, and ask the owner to sharpen the unclear ones. |
+| [`merge-pass`](skills/merge-pass) | Merge a repo's factory PRs that are two-way doors, and flag the rest for a person. |
 | [`dependency-update`](skills/dependency-update) | Update dependencies safely, one draft PR per update, under a release-age and pinning policy. |
 | [`tmdb`](skills/tmdb) | Look up movies and TV shows with the TMDB CLI. |
 | [`wger-workout`](skills/wger-workout) | Fetch today's routine from wger. |
@@ -37,7 +41,8 @@ Update with `npx skills update -g`.
 
 ## Review skills
 
-These skills compose, and each also runs on its own:
+These skills compose, and each also runs on its own. For the unattended daily run, see [`code-factory`](skills/code-factory/SETUP.md).
+
 
 - `expert-review` runs one or more experts on a change or a whole codebase, and returns findings with a fingerprint each. The experts live in [`skills/expert-review/experts/`](skills/expert-review/experts): security, tests, reliability, performance, dependencies, frontend design and accessibility. Add one by adding a file; see [`ADDING-EXPERTS.md`](skills/expert-review/ADDING-EXPERTS.md).
 - `review-loop` reviews a branch or MR, fixes what reviewers find, and repeats until a clean round. Its reviewers are `expert-review`, [`code-review`](https://github.com/mattpocock/skills), and the MR's review bot when the repo documents one.

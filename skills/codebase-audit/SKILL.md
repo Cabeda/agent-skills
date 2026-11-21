@@ -1,41 +1,36 @@
 ---
 name: codebase-audit
-description: Read-only audit of a whole repository that files new findings as proposed tickets. Use for a scheduled daily review of a repo, or a full app review that should produce tickets instead of fixes.
+description: Read-only audit of a repository against its stated goal, filing new findings as tickets. Use for a scheduled daily review of a repo, or a full app review that should produce tickets instead of fixes.
 ---
 
 # Codebase audit
 
-Find ways to improve one repository and file each as a **proposed** ticket for a person to triage. The audit is **read-only**: its only writes go to the tracker. Across several repos, audit one at a time, and carry on past a repo that fails.
+Find what stands between one repository and its **goal**, and file each as a ticket. The audit is **read-only**: its only writes are tickets. Across several repos, audit one at a time, and carry on past a repo that fails.
 
 ## 1. Set up
 
 Audit the default branch at HEAD with a clean working tree. Skip any repo that has uncommitted work or sits on another branch, and say why.
 
-Find the repo's tracker from its `AGENTS.md`, `CONTRIBUTING.md` or the setup `to-tickets` reads. Skip the repo when it has none.
+## 2. Find the goal
 
-## 2. Review
+Read the repo's `README.md`, then `AGENTS.md`. The goal is what the project is for and who it serves. A goal is **clear** when you can state, in two sentences, who the project is for and what outcome counts as success for them. A description of what the code is made of is not a goal.
 
-Call the Skill tool with `expert-review` on the **codebase** scope, with the experts the repo's config names, or else the ones it picks. The result is one merged report in `expert-review`'s finding format.
+When the goal is not clear, audit nothing. Run `forge file` once for the repo, with the fingerprint `<repo>|goal|no clear goal`, label `needs-info`, and a body that quotes what you found and asks the owner to write the goal at the top of the README and to run `grill-me` on it. A repo that already has that ticket open gets no second one.
 
-## 3. Drop what is already filed
+## 3. Review
 
-Tickets the audit files carry their finding's fingerprint on its own line:
+Call the Skill tool with `expert-review` on the **codebase** scope, giving it the goal and the experts the repo's config names (all of them when it names none). The result is one merged report in `expert-review`'s finding format.
 
-```
-Fingerprint: <path>|<lens>|<claim>
-```
+Keep a finding when its **Goal** line names a real way it holds the goal back. Drop a minor finding that has no honest link to the goal. Keep every blocker and major finding, and make its Goal line say what harm it does to the goal.
 
-Search the tracker for each finding's fingerprint:
+## 4. File what is new
 
-- **open** ticket: drop the finding, it is tracked
-- **closed** ticket, and the problem is still present: reopen it, or file a new one linking it, as the tracker allows
-- **closed** ticket, and the problem is gone: drop the finding
-- no ticket: keep the finding
+For each kept finding, run `forge file` with the finding's fingerprint. It refuses a finding that already has an open ticket, so a refusal is a normal result, and it reopens nothing. Report a finding whose earlier ticket is closed (`closed_before` in the result) as *back*, and name that ticket in the new one.
 
-## 4. File the rest
+The ticket body holds the finding's title, location, evidence, fix, acceptance check and goal, then its lens and severity. Write it so someone who has not seen the report can act on it. `forge file` labels it `factory`.
 
-Call the Skill tool with `to-tickets`, one ticket per kept finding. Each body holds the finding's title, location, evidence, fix, acceptance, lenses and severity, and the fingerprint line. Mark each ticket proposed by the tracker's convention, such as a `proposed` label.
+`to-tickets` supports GitHub, GitLab and local files, and Codeberg is none of them, so tickets go through `forge file` on both forges.
 
 ## 5. Report
 
-For each repo: the experts that ran, findings found, dropped as already filed, and filed (with links), and any expert that could not run. A repo with nothing new is a clean result: file nothing and say so.
+For each repo: the goal you used, the experts that ran, findings found, filed (with links) and skipped as already filed, and any expert that could not run. A repo with nothing new is a clean result: file nothing and say so.
