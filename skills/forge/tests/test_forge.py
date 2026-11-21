@@ -2,6 +2,7 @@
 
 import io
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -607,31 +608,90 @@ class CodebergTests(unittest.TestCase):
         http = RecordingHttp(*replies)
         return forge.Codeberg("me/app", token=token, http=http), http
 
-    def test_requests_match_the_forgejo_api(self):
-        swagger = Path("/tmp/cb-swagger.json")
-        if not swagger.exists():
-            self.skipTest("run the swagger fetch from the setup notes to enable this check")
-        spec = json.loads(swagger.read_text())["paths"]
-        cb, http = self.codeberg(
-            (200, [{"id": 4, "name": "x"}]),
-            (201, {"id": 5}),
-            (200, []),
-            (201, {"number": 9, "html_url": "u"}),
-            (200, {"title": "WIP: a"}),
-            (200, {}),
-            (200, {}),
-        )
-        cb.add_label(3, "needs-info")
-        cb.open_pr("factory/issue-3", "main", "Do it", "body")
+    def test_every_request_matches_the_published_forgejo_api(self):
+        """Paths, methods and body fields are checked against codeberg_api.json, a slice of Codeberg's swagger."""
+        api = json.loads(Path(__file__).with_name("codeberg_api.json").read_text())
+        body_schema = {
+            ("POST", "/issues"): "CreateIssueOption",
+            ("POST", "/issues/{index}/comments"): "CreateIssueCommentOption",
+            ("POST", "/issues/{index}/labels"): "IssueLabelsOption",
+            ("POST", "/labels"): "CreateLabelOption",
+            ("POST", "/pulls"): "CreatePullRequestOption",
+            ("PATCH", "/pulls/{index}"): "EditPullRequestOption",
+            ("POST", "/pulls/{index}/merge"): "MergePullRequestOption",
+        }
+        pr = {"number": 9, "title": "WIP: x", "head": {"ref": "factory/a", "sha": SHA}, "base": {}, "mergeable": True}
+        replies = {
+            ("GET", "/issues"): (200, []),
+            ("POST", "/issues"): (201, {"number": 8, "html_url": "u"}),
+            ("GET", "/issues/{index}"): (200, {"number": 3, "title": "t", "user": {"login": "owner"}}),
+            ("GET", "/issues/{index}/comments"): (200, []),
+            ("POST", "/issues/{index}/comments"): (201, {}),
+            ("POST", "/issues/{index}/labels"): (200, {}),
+            ("GET", "/labels"): (200, []),
+            ("POST", "/labels"): (201, {"id": 5}),
+            ("GET", "/pulls"): (200, []),
+            ("POST", "/pulls"): (201, {"number": 9, "html_url": "u"}),
+            ("GET", "/pulls/{index}"): (200, pr),
+            ("PATCH", "/pulls/{index}"): (200, {}),
+            ("GET", "/pulls/{index}/files"): (200, []),
+            ("GET", "/pulls/{index}/reviews"): (200, []),
+            ("GET", "/commits/{ref}/status"): (200, {"statuses": []}),
+            ("POST", "/pulls/{index}/merge"): (200, {}),
+            ("GET", "/collaborators/{collaborator}/permission"): (200, {"permission": "write"}),
+            ("GET", "/user"): (200, {"login": "owner"}),
+        }
+        seen = []
+
+        def http(method, url, body):
+            rest = url.split("/api/v1", 1)[1].split("?")[0]
+            if rest == "/user":
+                template = "/user"
+            else:
+                rest = rest.split("/repos/me/app", 1)[1]
+                parts = []
+                for index, part in enumerate(rest.strip("/").split("/")):
+                    previous = rest.strip("/").split("/")[index - 1] if index else ""
+                    parts.append(
+                        "{collaborator}"
+                        if previous == "collaborators"
+                        else "{ref}"
+                        if re.fullmatch(r"[0-9a-f]{40}", part)
+                        else "{index}"
+                        if part.isdigit()
+                        else part
+                    )
+                template = "/" + "/".join(parts)
+            seen.append((method, template, body))
+            return replies[(method, template)]
+
+        cb = forge.Codeberg("me/app", token="t", http=http)
+        cb.issues()
+        cb.all_issues()
+        cb.create_issue("T", "B")
+        cb.comment(3, "x")
+        cb.add_label(3, "needs-info")  # creates the label, then attaches it
+        cb.prs("open")
+        cb.pr_detail(9)
+        cb.open_pr("factory/x", "main", "T", "B")
         cb.ready(9)
-        cb.merge(9, SHA, "factory/issue-3")
-        for method, url, _ in http.requests:
-            path = url.split("/api/v1/repos/me/app", 1)[1].split("?")[0]
-            template = "/" + "/".join("{index}" if part.isdigit() else part for part in path.strip("/").split("/"))
-            template = template.replace("/labels/{index}", "/labels/{id}")
-            known = [t.replace("/repos/{owner}/{repo}", "") for t in spec if t.startswith("/repos/{owner}/{repo}")]
-            self.assertIn(template, known, f"{method} {url}")
-            self.assertIn(method.lower(), spec["/repos/{owner}/{repo}" + template], f"{method} {template}")
+        cb.merge(9, SHA, "factory/x")
+        cb.permission("someone")
+        cb.whoami()
+        cb.issue(3)
+
+        self.assertGreaterEqual(len(seen), 20)
+        for method, template, body in seen:
+            with self.subTest(request=f"{method} {template}"):
+                published = template if template == "/user" else "/repos/{owner}/{repo}" + template
+                self.assertIn(published, api["paths"], "path is not in the published API")
+                self.assertIn(method.lower(), api["paths"][published], "method is not allowed on that path")
+                schema = body_schema.get((method, template))
+                if schema:
+                    unknown = set(body) - set(api["bodies"][schema])
+                    self.assertFalse(unknown, f"{schema} has no field(s) {sorted(unknown)}")
+                else:
+                    self.assertIsNone(body, "a request with no known schema must send no body")
 
     def test_a_new_pr_is_a_wip_draft_and_ready_removes_the_prefix(self):
         cb, http = self.codeberg((201, {"number": 9, "html_url": "u"}), (200, {"title": "WIP: Do it"}), (200, {}))
